@@ -33,7 +33,7 @@ class OAuth2ServerServiceProvider extends ServiceProvider
      */
     public function boot(Handler $handler)
     {
-        $config = $this->app['files']->getRequire(__DIR__ .'/config/config.php');
+        $config = $this->app['files']->getRequire(__DIR__ .'/config/oauth2.php');
         $this->app['config']->set('oauth2-server-laravel::config', $config);
         $this->registerErrorHandlers($handler);
         $this->bootMiddlewares();
