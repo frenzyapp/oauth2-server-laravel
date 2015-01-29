@@ -17,7 +17,6 @@ use League\OAuth2\Server\Exception\OAuthException;
 use LucaDegasperi\OAuth2Server\Middlewares\CheckAuthCodeRequestMiddleware;
 use LucaDegasperi\OAuth2Server\Middlewares\OAuthMiddleware;
 use LucaDegasperi\OAuth2Server\Middlewares\OAuthOwnerMiddleware;
-use Illuminate\Foundation\Exceptions\Handler;
 
 class OAuth2ServerServiceProvider extends ServiceProvider
 {
@@ -31,11 +30,10 @@ class OAuth2ServerServiceProvider extends ServiceProvider
      * Bootstrap the application events.
      * @return void
      */
-    public function boot(Handler $handler)
+    public function boot()
     {
         $config = $this->app['files']->getRequire(__DIR__ .'/config/oauth2.php');
         $this->app['config']->set('oauth2-server-laravel::config', $config);
-        $this->registerErrorHandlers($handler);
         $this->bootMiddlewares();
     }
 
@@ -157,22 +155,7 @@ class OAuth2ServerServiceProvider extends ServiceProvider
         $this->app['router']->middleware('check-authorization-params', 'LucaDegasperi\OAuth2Server\Middlewares\CheckAuthCodeRequestMiddleware');
         $this->app['router']->middleware('oauth', 'LucaDegasperi\OAuth2Server\Middlewares\OAuthMiddleware');
         $this->app['router']->middleware('oauth-owner', 'LucaDegasperi\OAuth2Server\Middlewares\OAuthOwnerMiddleware');
+        $this->app['router']->middleware('oauth.error', 'LucaDegasperi\OAuth2Server\Middleware\JSONErrorHandlerMiddleware');
     }
 
-    /**
-     * Register the OAuth error handlers
-     * @return void
-     */
-    private function registerErrorHandlers(Handler $handler)
-    {
-        $handler->error(function(OAuthException $e) {
-            return new JsonResponse([
-                    'error' => $e->errorType,
-                    'error_description' => $e->getMessage()
-                ],
-                $e->httpStatusCode,
-                $e->getHttpHeaders()
-            );
-        });
-    }
 }
