@@ -9,12 +9,14 @@
  * @link      https://github.com/lucadegasperi/oauth2-server-laravel
  */
 
-namespace LucaDegasperi\OAuth2Server\Filters;
+namespace LucaDegasperi\OAuth2Server\Middlewares;
 
+use Closure;
+use Illuminate\Contracts\Routing\Middleware;
 use League\OAuth2\Server\Exception\AccessDeniedException;
 use LucaDegasperi\OAuth2Server\Authorizer;
 
-class OAuthOwnerFilter
+class OAuthOwnerMiddleware implements Middleware
 {
     /**
      * The Authorizer instance
@@ -36,7 +38,7 @@ class OAuthOwnerFilter
      * @return null
      * @throws \League\OAuth2\Server\Exception\AccessDeniedException
      */
-    public function filter()
+    public function handle($request, Closure $next)
     {
         if (func_num_args() > 2) {
             $ownerTypes = array_slice(func_get_args(), 2);
@@ -44,6 +46,6 @@ class OAuthOwnerFilter
                 throw new AccessDeniedException();
             }
         }
-        return null;
+        return $next($request);
     }
 }

@@ -14,9 +14,9 @@ namespace LucaDegasperi\OAuth2Server;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\ServiceProvider;
 use League\OAuth2\Server\Exception\OAuthException;
-use LucaDegasperi\OAuth2Server\Filters\CheckAuthCodeRequestFilter;
-use LucaDegasperi\OAuth2Server\Filters\OAuthFilter;
-use LucaDegasperi\OAuth2Server\Filters\OAuthOwnerFilter;
+use LucaDegasperi\OAuth2Server\Middlewares\CheckAuthCodeRequestMiddleware;
+use LucaDegasperi\OAuth2Server\Middlewares\OAuthMiddleware;
+use LucaDegasperi\OAuth2Server\Middlewares\OAuthOwnerMiddleware;
 use Illuminate\Foundation\Exceptions\Handler;
 
 class OAuth2ServerServiceProvider extends ServiceProvider
@@ -31,12 +31,13 @@ class OAuth2ServerServiceProvider extends ServiceProvider
      * Bootstrap the application events.
      * @return void
      */
-    // public function boot(Handler $handler)
-    // {
-    //     $this->package('lucadegasperi/oauth2-server-laravel', 'oauth2-server-laravel', __DIR__.'/');
-    //     $this->registerErrorHandlers($handler);
-    //     $this->bootFilters();
-    // }
+    public function boot(Handler $handler)
+    {
+        $config = $this->app['files']->getRequire(__DIR__ .'/config/config.php');
+        $this->app['config']->set('oauth2-server-laravel::config', $config);
+        $this->registerErrorHandlers($handler);
+        $this->bootMiddlewares();
+    }
 
     /**
      * Register the service provider.
@@ -151,11 +152,11 @@ class OAuth2ServerServiceProvider extends ServiceProvider
      * Boot the filters
      * @return void
      */
-    private function bootFilters()
+    private function bootMiddlewares()
     {
-        $this->app['router']->filter('check-authorization-params', 'LucaDegasperi\OAuth2Server\Filters\CheckAuthCodeRequestFilter');
-        $this->app['router']->filter('oauth', 'LucaDegasperi\OAuth2Server\Filters\OAuthFilter');
-        $this->app['router']->filter('oauth-owner', 'LucaDegasperi\OAuth2Server\Filters\OAuthOwnerFilter');
+        $this->app['router']->middleware('check-authorization-params', 'LucaDegasperi\OAuth2Server\Middlewares\CheckAuthCodeRequestMiddleware');
+        $this->app['router']->middleware('oauth', 'LucaDegasperi\OAuth2Server\Middlewares\OAuthMiddleware');
+        $this->app['router']->middleware('oauth-owner', 'LucaDegasperi\OAuth2Server\Middlewares\OAuthOwnerMiddleware');
     }
 
     /**

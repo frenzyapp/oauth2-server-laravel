@@ -11,9 +11,9 @@ class OAuthController extends Controller
     {
         $this->authorizer = $authorizer;
 
-        $this->beforeFilter('auth', ['only' => ['getAuthorize', 'postAuthorize']]);
-        $this->beforeFilter('csrf', ['only' => 'postAuthorize']);
-        $this->beforeFilter('check-authorization-params', ['only' => ['getAuthorize', 'postAuthorize']]);
+        $this->middleware('auth', ['only' => ['getAuthorize', 'postAuthorize']]);
+        $this->middleware('csrf', ['only' => 'postAuthorize']);
+        $this->middleware('check-authorization-params', ['only' => ['getAuthorize', 'postAuthorize']]);
     }
 
     public function postAccessToken()
