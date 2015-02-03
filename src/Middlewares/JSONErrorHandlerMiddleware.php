@@ -9,7 +9,7 @@
 * @link      https://github.com/lucadegasperi/oauth2-server-laravel
 */
 
-namespace LucaDegasperi\OAuth2Server\Middleware;
+namespace LucaDegasperi\OAuth2Server\Middlewares;
 
 use Closure;
 use Illuminate\Contracts\Routing\Middleware;
