@@ -155,7 +155,7 @@ class OAuth2ServerServiceProvider extends ServiceProvider
         $this->app['router']->middleware('check-authorization-params', 'LucaDegasperi\OAuth2Server\Middlewares\CheckAuthCodeRequestMiddleware');
         $this->app['router']->middleware('oauth', 'LucaDegasperi\OAuth2Server\Middlewares\OAuthMiddleware');
         $this->app['router']->middleware('oauth-owner', 'LucaDegasperi\OAuth2Server\Middlewares\OAuthOwnerMiddleware');
-        $this->app['router']->middleware('oauth.error', 'LucaDegasperi\OAuth2Server\Middleware\JSONErrorHandlerMiddleware');
+        $this->app['router']->middleware('oauth.error', 'LucaDegasperi\OAuth2Server\Middlewares\JSONErrorHandlerMiddleware');
     }
 
 }
